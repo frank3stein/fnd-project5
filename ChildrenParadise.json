@@ -1,0 +1,19 @@
+// Children's Paradise
+
+var childrenParadise : {
+	"playgrounds":[
+		
+	],
+	"parks":[
+	
+	],
+	"kindergardens":[
+	
+	],
+	"icecream":[
+	
+	],
+	"swimmingpools":[
+
+	]
+}

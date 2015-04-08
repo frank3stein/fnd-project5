@@ -1,26 +1,38 @@
 <!DOCTYPE html>
 <html>
   <head>
+  <title>Rotterdam the Children Paradise</title>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
   <!-- test -->
-    <style type="text/css">
-      html, body, #map-canvas { height: 100%; margin: 0; padding: 0;}
-    </style>
-    <script type="text/javascript"
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfa3vEfKxlIxDgQ0dyVH6TmtTRnsFRZXo">
-    </script>
-    <script type="text/javascript">
-      function initialize() {
-        var mapOptions = {
-          center: { lat: -34.397, lng: 150.644},
-          zoom: 8
-        };
-        var map = new google.maps.Map(document.getElementById('map-canvas'),
-            mapOptions);
-      }
-      google.maps.event.addDomListener(window, 'load', initialize);
-    </script>
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.19&key=AIzaSyCfa3vEfKxlIxDgQ0dyVH6TmtTRnsFRZXo&region=NL&libraries=places"></script>
+  <script type="text/javascript" src="ChildrenParadise.json"></script>
+  <script type="text/javascript" src="bower_components/knockout/dist/knockout.js"></script>
+  <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
   </head>
   <body>
-<div id="map-canvas"></div>
+<!--   <script id="list-template" type="text/html">
+    
+
+  </script> -->
+<!--     <div id="places-list" data-bind="foreach: { data: Places}">
+      <ul>
+        <li></li>
+      </ul>
+    </div> -->
+<div id="searchfield"><form><input id="pac-input" class="controls biginput" type="text" placeholder="The name of the city for the Children Paradise..." data-bind="autoComplete"></form></div>
+
+<div id="map-canvas">
+
+</div>
+<div id="places-container">
+  <ul id="places-list" data-bind="foreach : points">
+    <li data-bind="text: name"></li>
+  </ul>
+</div>
+
+
   </body>
+  <script type="text/javascript" src="js/ParadiseLive.js"></script>
+  <script type="text/javascript" src="js/jquery.autocomplete.min.js"></script>
 </html>

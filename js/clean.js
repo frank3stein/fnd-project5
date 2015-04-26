@@ -25,11 +25,13 @@ var Poi = [
         }
     ];
 var $yelpSearchResults = [];
+var markers = [];
+var map;
 
 function init(){
 
     // Google Maps initialized in Rotterdam
-    var map = new google.maps.Map(document.getElementById('map-canvas'), {
+    map = new google.maps.Map(document.getElementById('map-canvas'), {
         zoom: 12,
         center: new google.maps.LatLng(51.9167, 4.5000),
         mapTypeId: google.maps.MapTypeId.ROADMAP
@@ -48,17 +50,56 @@ function init(){
     }
 
 
-    // The Places function puts the markers and infowindows on the map.
-    var Places = function (name, lat, long, info) {
-        // Creating markers.
+
+    // // Add a marker to the map and push to the array.
+    // function addMarker(location) {
+    //     var marker = new google.maps.Marker({
+    //     position: location,
+    //     map: map
+    // });
+    // markers.push(marker);
+    // }
+    // function setAllMap(map) {
+    //     for (var i = 0; i < markers.length; i++) {
+    //         markers[i].setMap(map);
+    //     }
+    // }
+    // // Shows any markers currently in the array.
+    // function showMarkers() {
+    //     setAllMap(map);
+    // }
+    // // Removes the markers from the map, but keeps them in the array.
+    // function clearMarkers() {
+    //     setAllMap(null);
+    // }
+    // // Deletes the markers array
+    // function deleteMarkers() {
+    //     clearMarkers();
+    //     markers = [];
+    // }
+
+
+    // The Pins function puts the markers and infowindows on the map.
+    var Pins = function (data) {
+        // deleteMarkers();
+        var self = this;
+        self.name = data.businesses.name;
+        self.lat = data.businesses.lat;
+        self.long =data.businesses.long;
+        self.info= data.businesses.snippet_text;
+
+
+
         var marker = new google.maps.Marker({
             position: new google.maps.LatLng(lat, long),
-            title: name,
+            title: self.name,
             map: map
         });
+        // markers.push(self.marker);
+        
         // Creating Infowindow.
         var infowindow = new google.maps.InfoWindow({
-          content: name+"\n"+info
+          content: self.name+self.info
         });
 
         // When clicked the markers open the infowindow.
@@ -231,15 +272,31 @@ function init(){
 // });
 // var $yelpSearchResults=[];
 var makeYelpArray = function(data){
-        $yelpSearchResults=[];
-        for(searchResult in data.businesses){
-            $yelpSearchResults.push(data.businesses[searchResult]);
+        markers=[];
+        // $yelpSearchResults=[];
+        // 
+        // console.log(data.businesses);
+        // Sets the map on all markers in the array.
+
+        // for(searchResult in data.businesses){
+        //     $yelpSearchResults.push(data.businesses[searchResult]);
+        // }
+        // console.log($yelpSearchResults);
+        for (place in data){
+            markers.push(new Pins(data));
         }
-        console.log($yelpSearchResults);
-};
+
+                    // Sets the map on all markers in the array.
+
+
+
+        return markers;
+    };
+
 
 
 var search = function (searchTerm, searchCity){
+    console.log(searchTerm);
 
 
     /**
@@ -255,6 +312,7 @@ var yelp_url = 'https://api.yelp.com/v2/search';
     var parameters = {
         term: searchTerm,
         location: searchCity,
+        radius_filter: 5000,
       oauth_consumer_key: "JiPu2WHv2CvMTu2KIJodFw",
       oauth_token: "a-iQofdMTAKu6n2T3R1i2GZ-FxbNstV3",
       oauth_nonce: nonce_generate(),
@@ -295,26 +353,44 @@ var viewModel = function (){
 
     var self = this;
     // Search term as observable to check the Yelp database each time a search is made
-    self.searchTerm = ko.observable("Childrens Activities");
+    self.searchTerm = ko.observable("Children Activities");
     // City can be changed but for this project it will remain Rotterdam
     self.searchCity = ko.observable("Rotterdam");
-    self.results = search(self.searchTerm(), self.searchCity());
-    self.points = ko.observableArray();
-    console.log($yelpSearchResults);
+    // self.currentSearch = ko.observable(new search)
 
 
+    self.currentSearch = ko.computed(function(){
+        return search(self.searchTerm(), self.searchCity());
+    }, self);
+    // self.results = search(self.searchTerm(), self.searchCity());
+    self.pins = ko.observableArray([]);
 
-    self.data = (function(){
-        console.log($yelpSearchResults);
+    markers.forEach(function(data){
+        self.pins.push( new Pins(data)  );
+    });
+    console.log(self.points());
+    // console.log($yelpSearchResults);
+    // self.data = ko.computed(function(){
+    //     var results;
+    //     for (place in $yelpSearchResults){
+    //         results.push(new Places($yelpSearchResults[place].name, $yelpSearchResults[place].location.coordinate.latitude, $yelpSearchResults[place].location.coordinate.longitude, $yelpSearchResults[place].snippet_text));
+    //         console.log(results);
+    //     }
+    //     return self.points(results);
+    // });    
 
-        for (place in $yelpSearchResults){
-            self.points.push(new Places($yelpSearchResults[place].name, $yelpSearchResults[place].location.coordinate.latitude, $yelpSearchResults[place].location.coordinate.longitude, $yelpSearchResults[place].snippet_text));
-        }
-    })();
+
+    // self.data = (function(){
+    //     console.log($yelpSearchResults);
+
+    //     for (place in $yelpSearchResults){
+    //         self.points.push(new Places($yelpSearchResults[place].name, $yelpSearchResults[place].location.coordinate.latitude, $yelpSearchResults[place].location.coordinate.longitude, $yelpSearchResults[place].snippet_text));
+    //     }
+    // })();
 
 
 };
-console.log($yelpSearchResults);
+
 ko.applyBindings(new viewModel());
 
 google.maps.event.addDomListener(window, "load", init);

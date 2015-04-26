@@ -125,22 +125,23 @@
 // }
 
 // google.maps.event.addDomListener(window, 'load', initialize);
+function init(){
+    function Places(name, lat, long, info) {
+        var self = this;
+        self.name = name;
+        self.lat = lat;
+        self.long =long;
 
-function Places(name, lat, long, info) {
-    var self = this;
-    self.name = name;
-    self.lat = lat;
-    self.long =long;
+        var marker = new google.maps.Marker({
+            position: new google.maps.LatLng(lat, long),
+            title: name,
+            map: map
+        });
 
-    var marker = new google.maps.Marker({
-        position: new google.maps.LatLng(lat, long),
-        title: name,
-        map: map
-    });
+        var infowindow = new google.maps.InfoWindow({
+          content: info
+        });
 
-    var infowindow = new google.maps.InfoWindow({
-      content: info
-  });
 
     // //if you need the poition while dragging
     // google.maps.event.addListener(marker, 'drag', function() {
@@ -156,26 +157,101 @@ function Places(name, lat, long, info) {
     //     self.long(pos.lng());
     // }.bind(self));
 
-    google.maps.event.addListener(marker, 'click', function() {
-    infowindow.open(map,marker);
-  });
-}
+        google.maps.event.addListener(marker, 'click', function() {
+            infowindow.open(map,marker);
+        });
+    };
 
-var map = new google.maps.Map(document.getElementById('map-canvas'), {
-    zoom: 5,
-    center: new google.maps.LatLng(51, 4),
-    mapTypeId: google.maps.MapTypeId.ROADMAP
-});
 
-    $.ajax({
-        url:"https://api.yelp.com/v2/search",
-        term:"Child Care", 
-        location:"Rotterdam",
-        success:function(){},
-        dataType:"json"
+
+    var map = new google.maps.Map(document.getElementById('map-canvas'), {
+        zoom: 5,
+        center: new google.maps.LatLng(51, 4),
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    });
+    // $.getJSON("https://api.yelp.com/v2/search?term=kids&location=Rotterdam", {
+    //     type:"GET",
+    //     xhrFields: {withCredentials: false},
+    //     contentType:"text/plain",
+    //     headers: {},
+    //     dataType:"jsonp"    
+
+    // })
+    // .done(function(data){
+    //     console.log(data);
+    // });
+    
+
+    // https://github.com/ddo/oauth-1.0a
+    // API is used for 
+    var oauth = OAuth({
+        consumer: {
+            public: 'JiPu2WHv2CvMTu2KIJodFw',
+            secret: 'w9FmW2cOcACjQqbBLn9j4f68GQI'
+        },
+        signature_method: 'HMAC-SHA1'
     });
 
+    var token = {
+            public: 'a-iQofdMTAKu6n2T3R1i2GZ-FxbNstV3',
+            secret: '1O1GK028G4wbFQtJz3F1FodA-5A'
+    };
+
+    var request_data = {
+        url: 'https://api.yelp.com/v2/search',
+        method: 'POST',
+        data: {
+        "term":"Child Care", 
+        "location":"Rotterdam"            
+        }
+    };
+
+    $.ajax({
+        url: request_data.url,
+        type: request_data.method,
+        data: oauth.authorize(request_data, token),
+        dataType: "jsonp",
+        // data: request_data.data,
+        // headers: oauth.toHeader(oauth.authorize(request_data, token))
+        }).done(function(data) {
+        //process your data here
+        console.log(data);
+    });
+    
+    // $.ajax({
+    //     type:"GET",
+    //     url:"https://api.yelp.com/v2/search",
+    //     contentType:"text/plain",
+    //     // xhrFields: {
+    //     //     withCredentials: false
+    //     // },
+
+    //     headers: {
+    //         "oauth_consumer_key": "JiPu2WHv2CvMTu2KIJodFw",
+    //         "Consumer Secret": "w9FmW2cOcACjQqbBLn9j4f68GQI",
+    //         "oauth_token": "g0s2ZK-plPL5sZ3on34swZALW98lVZGB",
+
+    //         // Generating the OAuth signature is done by applying the HMAC-SHA1 with the oauth_token_secret.
+    //         "oauth_signature_method":"hmac-sha1",
+    //         "oauth_token_secret": "Br6HKB-DxbFhEK7tlnde_kp6La0",
+    //     },
+    //     data: {
+    //     "term":"Child Care", 
+    //     "location":"Rotterdam"
+    //     },
+    //     jsonp: false,
+    //     // jsonpCallback: function(data){
+    //     //     console.log(data);
+    //     // },
+    //     dataType:"jsonp",
+    //     // error : function(){}
+    // });
 var viewModel = {
+    // //Data
+    // var self = this;
+    // self.pins = ko.observableArray([]);
+    // self.newPinInfo = ko.observable();
+
     // $.getJSON("ChildrenParadise.json", function(data){
     //   for (place in Poi){
     //     var PlacesArray = [];
@@ -211,8 +287,10 @@ var viewModel = {
     //     }   
     //   })
     // }
-}
-
+};
 ko.applyBindings(viewModel);
+};
+google.maps.event.addDomListener(window, "load", init);
+
 
 

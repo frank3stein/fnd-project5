@@ -2,22 +2,26 @@ var Poi = [
 	{
 		name:"Burgerhout Superstore",
 		lat: 51.83156,
-		long: 4.75507
+		long: 4.75507,
+		info:"test"
 		},
 	{
 		name:"Kleib Beginnen en Groot",
 		lat: 51.9159491,
-		long: 4.4770234		
+		long: 4.4770234,
+		info:"test"		
 		},
 	{
 		name:"De Kleine Kapitein",
 		lat: 51.922047,
-		long: 4.493888	
+		long: 4.493888,
+		info:"test"	
 		},
 	{
 		name:"Plaswijckpark",
 		lat: 51.957642,
-		long: 4.479396		
+		long: 4.479396,
+		info:"test"		
 		}
 	// "Burgerhout Superstore" : [51.83156, 4.75507],
 	// "Kleib Beginnen en Groot" : [51.9159491, 4.4770234],

@@ -84,8 +84,8 @@ function init(){
         // deleteMarkers();
         var self = this;
         self.name = data.businesses.name;
-        self.lat = data.businesses.lat;
-        self.long =data.businesses.long;
+        self.lat = data.businesses.coordinate.lat;
+        self.long =data.businesses.coordinate.long;
         self.info= data.businesses.snippet_text;
 
 

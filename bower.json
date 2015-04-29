@@ -1,0 +1,21 @@
+{
+  "name": "fnd-project5",
+  "version": "0.0.0",
+  "authors": [
+    "frank3stein <martinov.emil@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.3"
+  },
+  "devDependencies": {
+    "knockout": "~3.3.0"
+  }
+}

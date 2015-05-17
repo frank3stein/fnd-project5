@@ -81,11 +81,11 @@ var search = (function (searchTerm, resultArray) {
         // Do stuff with results
         // console.log(results);
         for (var place in data.businesses){
-        self.resultArray.push(data.businesses[place]);
+        appViewModel.resultArray.push(data.businesses[place]);
             // console.log(makeYelpArray);
         console.log(resultArray);
         }
-        return resultArray;
+        // return resultArray;
       },
       error: function() {
         // Do stuff on fail
@@ -99,15 +99,19 @@ var search = (function (searchTerm, resultArray) {
 })(appViewModel);
 
 var appViewModel = function() {
+
       // Variable Declarations
   var self = this;
       self.searchTerm = ko.observable("Children Activities");
       self.resultArray = ko.observableArray([]);
 
       // Search Function
-      self.resultArray=ko.computed(function(){
-        return self.resultArray(search(self.searchTerm(), self.resultArray()));
-      }, self);
+      self.currentSearch=function(){
+
+        ko.computed(function(){
+          return search(self.searchTerm(), self.resultArray());
+        }, self);
+      };
       self.pins=ko.observableArray([
 
       ]);

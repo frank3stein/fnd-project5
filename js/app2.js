@@ -1,10 +1,10 @@
-// The following example creates complex markers to indicate beaches near
-// Sydney, NSW, Australia. Note that the anchor is set to
-// (0,32) to correspond to the base of the flagpole.
+// Creating Globals
 var mapMarkers=[],
     map,
     infowindow,
     $yelpArray;
+
+//Intialising the map and creating infowindow which will be shared among Pins
 function initialize() {
   var mapOptions = {
     zoom: 12,
@@ -20,11 +20,7 @@ function initialize() {
 
   // appViewModel.resultsArray.subscribe(appViewModel.markers);
   createArray('Sushi', 'Sydney');
-  $(ko.applyBindings(appViewModel));
-
-  // setMarkers(map, beaches);
-  // console.log($yelpArray);
-
+  ko.applyBindings(appViewModel);
 }
 
  // var makeYelpArray = function(results){
@@ -35,11 +31,12 @@ function initialize() {
  //   return $yelpArray;
  // })($yelpArray);
  // };
-
+// Creating the Pin object
  var Pins = function (data, i) {
-        // deleteMarkers();
         var self  = this;
+        // Pins are created inside Yelp ajax success function
         var yelpData = data.businesses[i];
+        // The object properties are taken from Yelp
         self.name = yelpData.name;
         self.lat  = yelpData.location.coordinate.latitude;
         self.long = yelpData.location.coordinate.longitude;
@@ -56,25 +53,31 @@ function initialize() {
             map: map
         });
 
-        mapMarkers.push(marker);
 
         // When clicked the markers open the infowindow.
+        // only works on list if self.click the function this does not work or
+        // not using =
         google.maps.event.addListener(marker, 'click', (function(map, marker, infowindow) {
+          // Yes there is JSLint suggestion but works
+          // perfectly. This listener also returns a click property for each Pin
+          // so when the Pins are clicked whether on the map or the list
+          // infowindow opens. Global infowindow is used so there is no need to
+          // close and open windows.
           return self.click = function(){
-            // map.setCenter(marker.position);
             infowindow.setContent(self.info);
             infowindow.open(map,marker);
           };
         })(map, marker, infowindow));
     };
 
-
+    // This is the function creating the initial array by ajax call to Yelp
  var createArray = function(searchTerm, searchCity){
 
       function nonce_generate() {
         return (Math.floor(Math.random() * 1e12).toString());
       }
-
+      // If there is no response from the server or bad request
+      // this function warns using an alert on screen and on console.
        var yelpRequestTimeOut = setTimeout(function(){
          alert("Yelp results failed to load. Please try again.");
          console.log("Ajax request failed to load");
@@ -82,6 +85,7 @@ function initialize() {
 
        var yelp_url = 'https://api.yelp.com/v2/search';
 
+      //  These parameters are local and private
        var parameters = {
            term: searchTerm,
            location: searchCity,
@@ -106,13 +110,22 @@ function initialize() {
          success: function(results) {
            // Do stuff with results
           //  console.log(results);
-            var Results = results.businesses;
-            var LENGTH  = Results.length,
+          // Variables defined so less memory is used
+            var Results = results.businesses,
+                LENGTH  = Results.length,
                 i;
             for(i=0;i<LENGTH;i++){
-              appViewModel.resultsArray.push(new Pins(results, i));
+            // Pins are pushed into Observable array to be shown in the list
+            // and to be used in the filter function
+            // The purpose to do this on the array is so that no additional steps
+            // like dirty checking each marker will be needed. Filtering the array
+            // should filter the Pins as well.
+            appViewModel.resultsArray.push(new Pins(results, i));
+            // mapMarkers.push(new Pins(results, i));
             }
+              appViewModel.search();
               clearTimeout(yelpRequestTimeOut);
+
 
          },
          error: function() {
@@ -167,40 +180,35 @@ function initialize() {
 //   infowindow.open(map, this);};
 // })(map, this.marker, infowindow));
 // }
-function onClick(){
-  // console.log(this.position);
-  // decided not to use center
-  // map.setCenter(this.position);
-  infowindow.setContent(this.info);
-  infowindow.open(map, this);
-}
-// function setMarkers(map, locations) {
-//
-//   for (var i = 0; i < locations.length; i++) {
-//     var beach = locations[i];
-//     var myLatLng = new google.maps.LatLng(locations[i].position);
-//     var infowindow = new google.maps.InfoWindow({
-//     content: locations[i].snippet_text
-//     });
-//     var marker = new google.maps.Marker({
-//         position: myLatLng,
-//         map: map,
-//         // icon: image,
-//         // shape: shape,
-//         title: beach.name
-//         // zIndex: beach[3]
-//     });
-//       mapMarkers.push(marker);
-//       // console.log(mapMarkers);
-//       onClick(map, marker, infowindow);
-//     }
-// }
 
 var appViewModel = {
   searchTerm: ko.observable(),
   resultsArray: ko.observableArray(),
-  pins: ko.observableArray(mapMarkers),
+  // pins: ko.observableArray(mapMarkers),
   query: ko.observable(''),
+  // search:ko.computed(function(){
+  //   return createArray(this.query, "Sydney");
+  // }, appViewModel),
+  search: ko.computed(function() {
+    if (!this.query){
+      console.log(this.resultsArray);
+      return this.resultsArray;
+    } else {
+    return ko.utils.arrayFilter(this.resultsArray, function(marker) {
+        return marker.name.toLowerCase().indexOf(this.query.toLowerCase()) < -1;
+    });
+  }
+}, appViewModel)
+  // search: ko.computed(function(value) {
+  // // remove all the current resultsArray, which removes them from the view
+  //   appViewModel.resultsArray.removeAll();
+  //   // resultsArray.forEach();
+  //   for(var x in resultsArray) {
+  //     if(resultsArray[x].name.toLowerCase().indexOf(value.toLowerCase()) >= 0) {
+  //       appViewModel.resultsArray.push(resultsArray[x]);
+  //     }
+  //   }
+  // }, appViewModel)
   // openInfoWindow: ko.computed(function(){
   //   console.log(pins());
   //   // return pins.forEach(function(){
@@ -231,5 +239,29 @@ var appViewModel = {
 // }
 
 };
+// appViewModel.search = ko.computed(function(value) {
+// // remove all the current resultsArray, which removes them from the view
+//   appViewModel.resultsArray.removeAll();
+//   // resultsArray.forEach();
+//   for(var x in resultsArray) {
+//     if(resultsArray[x].name.toLowerCase().indexOf(value.toLowerCase()) >= 0) {
+//       appViewModel.resultsArray.push(resultsArray[x]);
+//     }
+//   }
+// }, appViewModel);
+// http://www.knockmeout.net/2011/04/utility-functions-in-knockoutjs.html
+// appViewModel.search = ko.dependentObservable(function() {
+//   var query = this.query().toLowerCase();
+//   if (!query) {
+//       return this.resultsArray();
+//   } else {
+//       return ko.utils.arrayFilter(this.resultsArray(), function(item) {
+//
+//           return ko.utils.stringStartsWith(item.name.toLowerCase(), query);
+//       });
+//   }
+// }, appViewModel);
+// appViewModel.query.subscribe(appViewModel.search);
 
+// On window load function is intialized.
 google.maps.event.addDomListener(window, 'load', initialize);

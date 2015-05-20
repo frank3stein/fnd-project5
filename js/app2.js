@@ -23,14 +23,6 @@ function initialize() {
   ko.applyBindings(appViewModel);
 }
 
- // var makeYelpArray = function(results){
- //
- //   return (function($yelpArray){
- //   $yelpArray = createArray("Beach", "Sydney");
- //   console.log($yelpArray);
- //   return $yelpArray;
- // })($yelpArray);
- // };
 // Creating the Pin object
  var Pins = function (data, i) {
         var self  = this;
@@ -139,129 +131,18 @@ function initialize() {
 
  };
 
-// http://stackoverflow.com/questions/29557938/removing-map-pin-with-search
-// var Pin = function Pin(name, lat, lon, text) {
-//   var marker;
-//
-//   this.name = ko.observable(name);
-//   this.lat  = ko.observable(lat);
-//   this.lon  = ko.observable(lon);
-//   this.text = ko.observable(text);
-//
-//   marker = new google.maps.Marker({
-//     position: new google.maps.LatLng(lat, lon),
-//     animation: google.maps.Animation.DROP
-//   });
-//
-//   this.isVisible = ko.observable(false);
-//
-//   this.isVisible.subscribe(function(currentState) {
-//     if (currentState) {
-//       marker.setMap(map);
-//     } else {
-//       marker.setMap(null);
-//     }
-//   });
-//
-//   this.isVisible(true);
-//
-// //   google.maps.event.addListener(marker, 'click', (function(marker) {
-// //     return function(){
-// //       infowindow.setPosition(myLatLng);
-// //       infowindow.open(map, marker);}
-// // })(marker));
-// };
-// function onClick(){
-//   google.maps.event.addListener(marker, 'click', (function(map, marker, infowindow) {
-//   return function(){
-//   // console.log(this.position);
-//   map.setCenter(this.position);
-//   infowindow.setContent(this.info);
-//   infowindow.open(map, this);};
-// })(map, this.marker, infowindow));
-// }
-
 var appViewModel = {
-  searchTerm: ko.observable(),
-  resultsArray: ko.observableArray(),
-  // pins: ko.observableArray(mapMarkers),
-  query: ko.observable(''),
-  // search:ko.computed(function(){
-  //   return createArray(this.query, "Sydney");
-  // }, appViewModel),
-  search: ko.computed(function() {
+  query         : ko.observable(''),
+  resultsArray  : ko.observableArray(),
+  search        : ko.computed(function() {
     if (!this.query){
-      console.log(this.resultsArray);
+        console.log(this.resultsArray);
       return this.resultsArray;
     } else {
-    return ko.utils.arrayFilter(this.resultsArray, function(marker) {
-        return marker.name.toLowerCase().indexOf(this.query.toLowerCase()) < -1;
-    });
-  }
-}, appViewModel)
-  // search: ko.computed(function(value) {
-  // // remove all the current resultsArray, which removes them from the view
-  //   appViewModel.resultsArray.removeAll();
-  //   // resultsArray.forEach();
-  //   for(var x in resultsArray) {
-  //     if(resultsArray[x].name.toLowerCase().indexOf(value.toLowerCase()) >= 0) {
-  //       appViewModel.resultsArray.push(resultsArray[x]);
-  //     }
-  //   }
-  // }, appViewModel)
-  // openInfoWindow: ko.computed(function(){
-  //   console.log(pins());
-  //   // return pins.forEach(function(){
-  //   //   infowindow.setContent(this.info);
-  //   //   infowindow.open(map, this);
-  //   // });
-  // }, this),
-
-  // search: ko.computed(function(){
-  //
-  // }),
-  // markers: ko.computed(function(){
-  //   return console.log(this.resultsArray);
-  //   // setMarkers(map, this.resultsArray);
-  // }, map, this),
-  // mapLog: console.log(map),
-  // init: function(){},
-//   search: function(value){
-//   // appViewModel.pins.removeAll();
-//
-//   if (value ==='') return;
-//
-//   for (var pin in pins) {
-//     if (pins[pin][0].toLowerCase().indexOf(value.toLowerCase()) >= 0) {
-//       appViewModel.pins.push(pins[pin]);
-//     }
-//   }
-// }
-
+        return ko.utils.arrayFilter(this.resultsArray, function(pin) {
+          return pin.name.toLowerCase().indexOf(this.query.toLowerCase()) < -1;
+        });
+      }
+  }, appViewModel)
 };
-// appViewModel.search = ko.computed(function(value) {
-// // remove all the current resultsArray, which removes them from the view
-//   appViewModel.resultsArray.removeAll();
-//   // resultsArray.forEach();
-//   for(var x in resultsArray) {
-//     if(resultsArray[x].name.toLowerCase().indexOf(value.toLowerCase()) >= 0) {
-//       appViewModel.resultsArray.push(resultsArray[x]);
-//     }
-//   }
-// }, appViewModel);
-// http://www.knockmeout.net/2011/04/utility-functions-in-knockoutjs.html
-// appViewModel.search = ko.dependentObservable(function() {
-//   var query = this.query().toLowerCase();
-//   if (!query) {
-//       return this.resultsArray();
-//   } else {
-//       return ko.utils.arrayFilter(this.resultsArray(), function(item) {
-//
-//           return ko.utils.stringStartsWith(item.name.toLowerCase(), query);
-//       });
-//   }
-// }, appViewModel);
-// appViewModel.query.subscribe(appViewModel.search);
-
-// On window load function is intialized.
 google.maps.event.addDomListener(window, 'load', initialize);

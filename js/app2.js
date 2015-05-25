@@ -2,45 +2,33 @@
 var mapMarkers=[],
     map,
     infowindow;
-
 //Intialising the map and creating infowindow which will be shared among Pins
 function initialize() {
   var mapOptions = {
     zoom: 12,
     center: new google.maps.LatLng(-33.9, 151.2)
   };
-    map = new google.maps.Map(document.getElementById('map-canvas'),
-                                mapOptions);
-    // Creating Infowindow.
+    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
     infowindow = new google.maps.InfoWindow();
-  // appViewModel.resultsArray.subscribe(appViewModel.markers);
+  // Creating Array with Yelp, populating resultsArray, adding filteredItems to model
   createArray('Sushi', 'Sydney');
   appViewModel.resultsArray(mapMarkers);
   appViewModel.filteredItems = ko.computed(function() {
       var filter = this.filter().toLowerCase();
       if (!filter) {
         return this.resultsArray();
-        // return ko.computed(function(){
-        //   return appViewModel.resultsArray();
-        // }, appViewModel);
-
       } else {
           return this.resultsArray().filter(function(item){
             var doesMatch = item.name.toLowerCase().indexOf(filter)>-1;
             item.isVisible(doesMatch);
               return doesMatch;
-          }, appViewModel);
+          });
       }
   }, appViewModel);
   ko.applyBindings(appViewModel);
-
-}
-
-var Filtering = function(value, index, array){
-
-};
-
-// Creating the Pin object
+} // init close
+// Creating the Pin constructor object
  var Pins = function (data, i) {
         var self  = this;
         // Pins are created inside Yelp ajax success function
@@ -60,7 +48,6 @@ var Filtering = function(value, index, array){
           infowindow.setContent(self.info);
           infowindow.open(map,marker);
         };
-
         var marker = new google.maps.Marker({
             position: new google.maps.LatLng(self.lat, self.long),
             title: self.name,
@@ -75,7 +62,6 @@ var Filtering = function(value, index, array){
             marker.setMap(null);
           }
         });
-
         // When clicked the markers open the infowindow.
         // only works on list if self.click the function this does not work or
         // not using =
@@ -93,12 +79,7 @@ var pushModelApp = function(results){
       LENGTH  = Results.length,
       i;
   for(i=0;i<LENGTH;i++){
-  // Pins are pushed into Observable array to be shown in the list
-  // and to be used in the filter function
-  // The purpose to do this on the array is so that no additional steps
-  // like dirty checking each marker will be needed. Filtering the array
-  // should filter the Pins as well.
-  mapMarkers.push(new Pins(results, i));
+    mapMarkers.push(new Pins(results, i));
   // pushing to mapMarkers first so after the loop has finished resultsArray is
   // updated to avoid unnecessary updates to the view in the for loop.
   }
@@ -156,7 +137,6 @@ var pushModelApp = function(results){
 
 var appViewModel = {
   filter        : ko.observable(""),
-  search        : ko.observable(""),
   resultsArray  : ko.observableArray([])
 };
 

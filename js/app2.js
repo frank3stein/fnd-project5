@@ -1,8 +1,7 @@
 // Creating Globals
 var mapMarkers=[],
     map,
-    infowindow,
-    $yelpArray;
+    infowindow;
 
 //Intialising the map and creating infowindow which will be shared among Pins
 function initialize() {
@@ -13,14 +12,9 @@ function initialize() {
     map = new google.maps.Map(document.getElementById('map-canvas'),
                                 mapOptions);
     // Creating Infowindow.
-
-    infowindow = new google.maps.InfoWindow({
-      maxWidth: 300
-    });
-
+    infowindow = new google.maps.InfoWindow();
   // appViewModel.resultsArray.subscribe(appViewModel.markers);
   createArray('Sushi', 'Sydney');
-  appViewModel.query.subscribe(appViewModel.search);
   ko.applyBindings(appViewModel);
 }
 
@@ -39,6 +33,7 @@ function initialize() {
                     "<p>Rating:"+yelpData.rating+"</p>"+
                     "<img src='"+yelpData.image_url+"'>"+
                     "</div>";
+        // Method for Pin so it can be called by knockout list data-bind
         self.clicked = function(){
           infowindow.setContent(self.info);
           infowindow.open(map,marker);
@@ -50,7 +45,6 @@ function initialize() {
             map: map
         });
 
-
         // When clicked the markers open the infowindow.
         // only works on list if self.click the function this does not work or
         // not using =
@@ -61,10 +55,6 @@ function initialize() {
           // global infowindow opens. Global InfowWindow used as a best practice on
           // google maps.
           return self.clicked;
-          // = function (){
-          //   infowindow.setContent(self.info);
-          //   infowindow.open(map,marker);
-          // };
         })());
     };
 
@@ -112,7 +102,7 @@ var pushModelApp = function(results){
          oauth_timestamp: Math.floor(Date.now()/1000),
          oauth_signature_method: 'HMAC-SHA1',
          oauth_version : '1.0',
-         callback: 'cb'              // This is crucial to include for jsonp implementation in AJAX or else the oauth-signature will be wrong.
+         callback: 'cb'
        };
 
        var encodedSignature = oauthSignature.generate('GET',yelp_url, parameters, "w9FmW2cOcACjQqbBLn9j4f68GQI", "1O1GK028G4wbFQtJz3F1FodA-5A");
@@ -121,67 +111,24 @@ var pushModelApp = function(results){
        var settings = {
          url: yelp_url,
          data: parameters,
-         cache: true,                // This is crucial to include as well to prevent jQuery from adding on a cache-buster parameter "_=23489489749837", invalidating our oauth-signature
+         cache: true,
          dataType: 'jsonp',
          success: function(results) {
            // Do stuff with results
            pushModelApp(results);
-          //  console.log(results);
-
-          // here in the commented section the function and data run is not visible
-          // to global it is private, so appViewModel.resultsArray() is undefined
-          // when run on console
-          // Variables defined so less memory is used
-
-            // var Results = results.businesses,
-            //     LENGTH  = Results.length,
-            //     i;
-            // for(i=0;i<LENGTH;i++){
-            // // Pins are pushed into Observable array to be shown in the list
-            // // and to be used in the filter function
-            // // The purpose to do this on the array is so that no additional steps
-            // // like dirty checking each marker will be needed. Filtering the array
-            // // should filter the Pins as well.
-            // appViewModel.resultsArray.push(new Pins(results, i));
-            // mapMarkers.push(new Pins(results, i));
-            // // mapMarkers.push(new Pins(results, i));
-            // }
-
-              clearTimeout(yelpRequestTimeOut);
-
-
+           clearTimeout(yelpRequestTimeOut);
          },
          error: function() {
            // Do stuff on fail
-
          }
        };
-
        // Send AJAX query via jQuery library.
        $.ajax(settings);
-
  };
 
 var appViewModel = {
-  // var self = this;
-  // self.query = ko.observable();
-  // self.resultsArray = ko.observableArray(mapMarkers);
-  // self.search = ko.computed(function(){
-  //   return self.resultsArray;
-  // }, self);
-  // self          : this,
   query         : ko.observable(),
-  resultsArray  : ko.observableArray(),
-  // search        : ko.computed(function() {
-  //   return appViewModel.resultsArray;
-  //   // if (!this.query){
-  //   //     console.log(this.resultsArray());
-  //   //   return this.resultsArray();
-  //   // } else {
-  //   //     return ko.utils.arrayFilter(this.resultsArray(), function(pin) {
-  //   //       return pin.name.toLowerCase().indexOf(this.query().toLowerCase()) < -1;
-  //   //     });
-  //   //   }
-  // })
+  resultsArray  : ko.observableArray()
+
 };
 google.maps.event.addDomListener(window, 'load', initialize);

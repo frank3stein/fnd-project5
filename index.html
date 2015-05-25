@@ -3,11 +3,13 @@
 <head>
 	<title>New Map</title>
 	<link rel="stylesheet" href="css/style.css" media="screen" title="no title" charset="utf-8">
+	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<meta name="viewport" content="initial-scale=1.0, pin-scalable=no" />
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.19&key=AIzaSyCfa3vEfKxlIxDgQ0dyVH6TmtTRnsFRZXo&region=NL&libraries=places"></script>
 	<script type="text/javascript" src="js/knockout-latest.js"></script>
 	<script type="text/javascript" src="js/jquery.min.js"></script>
 	<script src="js/oauth-signature.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
 </head>
 <body>
 	<input placeholder="Search..." type="search" data-bind="text: query, valueUpdate: 'keyup'" autocomplete="on">
@@ -15,11 +17,23 @@
 	<!-- <form><input data-bind="textInput: currentSearch" placeholder="Filter the map..."></form> -->
 	<div id="map-canvas">
 </div>
-<div id="places-container">
-		<ul id="places-list" data-bind="foreach: resultsArray">
-	    <li data-bind="text: $data.name, click: $data.click" ></li>
+<!-- <div id="places-container"> -->
+<a class="btn btn-primary" data-toggle="collapse" href="#places-list" aria-expanded="false" aria-controls="places-list">
+  Sushi Restaurants List
+</a>
+		<ul id="places-list" class='collapse' data-bind="foreach: resultsArray">
+	    <li data-bind="text: $data.name, click: $data.clicked" ></li>
 	  </ul>
-</div>
+
+<!-- <div class="dropdown">
+  <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Dropdown trigger
+    <span class="caret"></span>
+  </button>
+		<ul id="places-list" class='dropdown-menu' role='menu' aria-labelledby="dLabel" data-bind="foreach: resultsArray">
+	    <li data-bind="text: $data.name, click: $data.clicked" ></li>
+	  </ul>
+</div> -->
 </body>
 <script type="text/javascript" src="js/app2.js"></script>
 </html>

@@ -14,8 +14,8 @@ var uglify = require('gulp-uglify');
 // var imagemin = require('gulp-imagemin');
 // var pngquant = require('imagemin-pngquant');
 //
-// // concat
-// var concat = require('gulp-concat');
+// concat
+var concat = require('gulp-concat');
 //
 // watch
 var watch = require('gulp-watch');
@@ -98,17 +98,21 @@ gulp.task('watch', function() {
 //     ));
 // });
 
+// Copying important files over build folder
 gulp.task('packages', function(){
   gulp.src('node_modules/jquery/dist/jquery.min.js')
     .pipe(gulp.dest('build/js'));
   gulp.src('node_modules/knockout/build/output/knockout-latest.js')
     .pipe(gulp.dest('build/js'));
+  gulp.src('fonts/**')
+    .pipe(gulp.dest('build/fonts'));
 });
 
 
 // Minify CSS
 gulp.task('css', function() {
   return gulp.src('css/*.css')
+    .pipe(concat('style.css'))
     .pipe(minifyCss({compatibility: 'ie8'}))
     .pipe(gulp.dest('build/css'));
 });

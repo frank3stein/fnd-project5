@@ -20,6 +20,7 @@ function initialize() {
 
   // appViewModel.resultsArray.subscribe(appViewModel.markers);
   createArray('Sushi', 'Sydney');
+  appViewModel.query.subscribe(appViewModel.search);
   ko.applyBindings(appViewModel);
 }
 
@@ -38,6 +39,10 @@ function initialize() {
                     "<p>Rating:"+yelpData.rating+"</p>"+
                     "<img src='"+yelpData.image_url+"'>"+
                     "</div>";
+        self.clicked = function(){
+          infowindow.setContent(self.info);
+          infowindow.open(map,marker);
+        };
 
         var marker = new google.maps.Marker({
             position: new google.maps.LatLng(self.lat, self.long),
@@ -49,18 +54,37 @@ function initialize() {
         // When clicked the markers open the infowindow.
         // only works on list if self.click the function this does not work or
         // not using =
-        google.maps.event.addListener(marker, 'click', (function(map, marker, infowindow) {
+        google.maps.event.addListener(marker, 'click', (function() {
           // Yes there is JSLint suggestion but works
           // perfectly. This listener also returns a click property for each Pin
-          // so when the Pins are clicked whether on the map or the list
-          // infowindow opens. Global infowindow is used so there is no need to
-          // close and open windows.
-          return self.click = function(){
-            infowindow.setContent(self.info);
-            infowindow.open(map,marker);
-          };
-        })(map, marker, infowindow));
+          // so when the Pins are clicked whether on the map or on the list
+          // global infowindow opens. Global InfowWindow used as a best practice on
+          // google maps.
+          return self.clicked;
+          // = function (){
+          //   infowindow.setContent(self.info);
+          //   infowindow.open(map,marker);
+          // };
+        })());
     };
+
+var pushModelApp = function(results){
+  var Results = results.businesses,
+      LENGTH  = Results.length,
+      i;
+  for(i=0;i<LENGTH;i++){
+  // Pins are pushed into Observable array to be shown in the list
+  // and to be used in the filter function
+  // The purpose to do this on the array is so that no additional steps
+  // like dirty checking each marker will be needed. Filtering the array
+  // should filter the Pins as well.
+  // appViewModel.resultsArray.push(new Pins(results, i));
+  mapMarkers.push(new Pins(results, i));
+  // pushing to mapMarkers first so after the loop has finished resultsArray is
+  // updated to avoid unnecessary updates to the view in the for loop.
+  }
+  appViewModel.resultsArray(mapMarkers);
+};
 
     // This is the function creating the initial array by ajax call to Yelp
  var createArray = function(searchTerm, searchCity){
@@ -101,21 +125,28 @@ function initialize() {
          dataType: 'jsonp',
          success: function(results) {
            // Do stuff with results
+           pushModelApp(results);
           //  console.log(results);
+
+          // here in the commented section the function and data run is not visible
+          // to global it is private, so appViewModel.resultsArray() is undefined
+          // when run on console
           // Variables defined so less memory is used
-            var Results = results.businesses,
-                LENGTH  = Results.length,
-                i;
-            for(i=0;i<LENGTH;i++){
-            // Pins are pushed into Observable array to be shown in the list
-            // and to be used in the filter function
-            // The purpose to do this on the array is so that no additional steps
-            // like dirty checking each marker will be needed. Filtering the array
-            // should filter the Pins as well.
-            appViewModel.resultsArray.push(new Pins(results, i));
+
+            // var Results = results.businesses,
+            //     LENGTH  = Results.length,
+            //     i;
+            // for(i=0;i<LENGTH;i++){
+            // // Pins are pushed into Observable array to be shown in the list
+            // // and to be used in the filter function
+            // // The purpose to do this on the array is so that no additional steps
+            // // like dirty checking each marker will be needed. Filtering the array
+            // // should filter the Pins as well.
+            // appViewModel.resultsArray.push(new Pins(results, i));
             // mapMarkers.push(new Pins(results, i));
-            }
-              appViewModel.search();
+            // // mapMarkers.push(new Pins(results, i));
+            // }
+
               clearTimeout(yelpRequestTimeOut);
 
 
@@ -132,17 +163,25 @@ function initialize() {
  };
 
 var appViewModel = {
-  query         : ko.observable(''),
+  // var self = this;
+  // self.query = ko.observable();
+  // self.resultsArray = ko.observableArray(mapMarkers);
+  // self.search = ko.computed(function(){
+  //   return self.resultsArray;
+  // }, self);
+  // self          : this,
+  query         : ko.observable(),
   resultsArray  : ko.observableArray(),
-  search        : ko.computed(function() {
-    if (!this.query){
-        console.log(this.resultsArray);
-      return this.resultsArray;
-    } else {
-        return ko.utils.arrayFilter(this.resultsArray, function(pin) {
-          return pin.name.toLowerCase().indexOf(this.query.toLowerCase()) < -1;
-        });
-      }
-  }, appViewModel)
+  // search        : ko.computed(function() {
+  //   return appViewModel.resultsArray;
+  //   // if (!this.query){
+  //   //     console.log(this.resultsArray());
+  //   //   return this.resultsArray();
+  //   // } else {
+  //   //     return ko.utils.arrayFilter(this.resultsArray(), function(pin) {
+  //   //       return pin.name.toLowerCase().indexOf(this.query().toLowerCase()) < -1;
+  //   //     });
+  //   //   }
+  // })
 };
 google.maps.event.addDomListener(window, 'load', initialize);

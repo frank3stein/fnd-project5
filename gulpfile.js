@@ -67,9 +67,8 @@ gulp.task('js', function() {
 // });
 
 
-// Gulp Watch and run tasks
+// Gulp watches and run tasks if needed.
 gulp.task('watch', function() {
-
   // Watch .scss files
   gulp.watch('css/*.css', ['css']);
 
@@ -115,4 +114,21 @@ gulp.task('css', function() {
     .pipe(concat('style.css'))
     .pipe(minifyCss({compatibility: 'ie8'}))
     .pipe(gulp.dest('build/css'));
+});
+
+// default task
+gulp.task('default', function(){
+  gulp.run('html', 'js', 'css');
+
+  // Watch .scss files
+  gulp.watch('css/*.css', ['css']);
+
+  // Watch .js files
+  gulp.watch('js/*.js', ['js']);
+
+  // Watch image files
+  gulp.watch('src/images/**/*', ['images']);
+
+  // Watch .html files
+  gulp.watch('*.html', ['html']);
 });

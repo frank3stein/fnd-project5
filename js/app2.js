@@ -15,8 +15,30 @@ function initialize() {
     infowindow = new google.maps.InfoWindow();
   // appViewModel.resultsArray.subscribe(appViewModel.markers);
   createArray('Sushi', 'Sydney');
+  appViewModel.resultsArray(mapMarkers);
+  appViewModel.filteredItems = ko.computed(function() {
+      var filter = this.filter().toLowerCase();
+      if (!filter) {
+        return this.resultsArray();
+        // return ko.computed(function(){
+        //   return appViewModel.resultsArray();
+        // }, appViewModel);
+
+      } else {
+          return this.resultsArray().filter(function(item){
+            var doesMatch = item.name.toLowerCase().indexOf(filter)>-1;
+            item.isVisible(doesMatch);
+              return doesMatch;
+          }, appViewModel);
+      }
+  }, appViewModel);
   ko.applyBindings(appViewModel);
+
 }
+
+var Filtering = function(value, index, array){
+
+};
 
 // Creating the Pin object
  var Pins = function (data, i) {
@@ -44,18 +66,26 @@ function initialize() {
             title: self.name,
             map: map
         });
+        // http://stackoverflow.com/questions/29557938/removing-map-pin-with-search
+        self.isVisible = ko.observable();
+        self.isVisible.subscribe(function(currentState) {
+          if (currentState) {
+            marker.setMap(map);
+          } else {
+            marker.setMap(null);
+          }
+        });
 
         // When clicked the markers open the infowindow.
         // only works on list if self.click the function this does not work or
         // not using =
         google.maps.event.addListener(marker, 'click', (function() {
-          // Yes there is JSLint suggestion but works
-          // perfectly. This listener also returns a click property for each Pin
-          // so when the Pins are clicked whether on the map or on the list
-          // global infowindow opens. Global InfowWindow used as a best practice on
+          // Global InfowWindow used as a best practice on
           // google maps.
+          // Method of Pin.clicked is called when a Pin is clicked.
           return self.clicked;
         })());
+        // Since Pin.clicked lives inside Pin it can reach to map marker and infoWindow
     };
 
 var pushModelApp = function(results){
@@ -68,12 +98,10 @@ var pushModelApp = function(results){
   // The purpose to do this on the array is so that no additional steps
   // like dirty checking each marker will be needed. Filtering the array
   // should filter the Pins as well.
-  // appViewModel.resultsArray.push(new Pins(results, i));
   mapMarkers.push(new Pins(results, i));
   // pushing to mapMarkers first so after the loop has finished resultsArray is
   // updated to avoid unnecessary updates to the view in the for loop.
   }
-  appViewModel.resultsArray(mapMarkers);
 };
 
     // This is the function creating the initial array by ajax call to Yelp
@@ -127,8 +155,9 @@ var pushModelApp = function(results){
  };
 
 var appViewModel = {
-  query         : ko.observable(),
-  resultsArray  : ko.observableArray()
-
+  filter        : ko.observable(""),
+  search        : ko.observable(""),
+  resultsArray  : ko.observableArray([])
 };
+
 google.maps.event.addDomListener(window, 'load', initialize);

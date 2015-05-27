@@ -29,12 +29,6 @@ function initialize() {
   }, appViewModel);
   ko.applyBindings(appViewModel);
 } // init close
-// Get Lat Long from Yelp
-// mapOptions.center = new google.maps.LatLng(results.region.center.latitude, results.region.center.longitude2);
-var centerMap = function(results){
-    lat    = results.region.center.latitude;
-    long   = results.region.center.longitude;
-};
 // Creating the Pin constructor object
 var Pins = function (data, i) {
         var self  = this;

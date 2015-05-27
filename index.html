@@ -4,36 +4,28 @@
 	<title>New Map</title>
 	<link rel="stylesheet" href="css/style.css" media="screen" title="no title" charset="utf-8">
 	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/awesomplete.css" />
+	<script src="js/lib.js"></script>
+	<script src="js/awesomplete.js" async></script>
 	<meta name="viewport" content="initial-scale=1.0"/>
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.19&key=AIzaSyCfa3vEfKxlIxDgQ0dyVH6TmtTRnsFRZXo&region=NL&libraries=places"></script>
 	<script type="text/javascript" src="js/knockout-latest.js"></script>
 	<script type="text/javascript" src="js/jquery.min.js"></script>
 	<script src="js/oauth-signature.min.js"></script>
-	<script src="js/bootstrap.min.js"></script>
+	<script src="js/bootstrap.min.js" async></script>
 </head>
 <body>
-	<input placeholder="Search..." type="text" data-bind="textInput: filter, valueUpdate: 'keyup'" autocomplete="off">
-	<!-- <input id="search" type="search" name="search" placeholder="Search for a pin" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off" /> -->
-	<!-- <form><input data-bind="textInput: currentSearch" placeholder="Filter the map..."></form> -->
+	<!-- With Awesomplete can be used class="awesomplete" data-list="#places-list" -->
+	<input placeholder="Search..." type="text" data-bind="value: filter, valueUpdate: 'keyup'">
 	<div id="map-canvas">
 </div>
-<!-- <div id="places-container"> -->
-<a class="btn btn-primary" data-toggle="collapse" href="#places-list" aria-expanded="false" aria-controls="places-list">
-  Sushi List
+<a class="btn" data-toggle="collapse" href="#places-list" aria-expanded="true" aria-controls="places-list">
+  <span class="glyphicon glyphicon-menu-hamburger"></span>
 </a>
 		<ul id="places-list" class="collapse" data-bind="foreach: filteredItems">
 	    <li data-bind="text: name, click: clicked" ></li>
 	  </ul>
 
-<!-- <div class="dropdown">
-  <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Dropdown trigger
-    <span class="caret"></span>
-  </button>
-		<ul id="places-list" class='dropdown-menu' role='menu' aria-labelledby="dLabel" data-bind="foreach: resultsArray">
-	    <li data-bind="text: $data.name, click: $data.clicked" ></li>
-	  </ul>
-</div> -->
 </body>
 <script type="text/javascript" src="js/app2.js"></script>
 </html>

@@ -10,10 +10,11 @@ function initialize() {
   };
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
-    infowindow = new google.maps.InfoWindow();
+    infowindow = new google.maps.InfoWindow({
+      maxWidth: 200
+    });
   // Creating Array with Yelp, populating resultsArray, adding filteredItems to model
   createArray('Sushi', 'Sydney');
-  appViewModel.resultsArray(mapMarkers);
   appViewModel.filteredItems = ko.computed(function() {
       var filter = this.filter().toLowerCase();
       if (!filter) {
@@ -28,8 +29,14 @@ function initialize() {
   }, appViewModel);
   ko.applyBindings(appViewModel);
 } // init close
+// Get Lat Long from Yelp
+// mapOptions.center = new google.maps.LatLng(results.region.center.latitude, results.region.center.longitude2);
+var centerMap = function(results){
+    lat    = results.region.center.latitude;
+    long   = results.region.center.longitude;
+};
 // Creating the Pin constructor object
- var Pins = function (data, i) {
+var Pins = function (data, i) {
         var self  = this;
         // Pins are created inside Yelp ajax success function
         var yelpData = data.businesses[i];
@@ -43,7 +50,7 @@ function initialize() {
                     "<p>Rating:"+yelpData.rating+"</p>"+
                     "<img src='"+yelpData.image_url+"'>"+
                     "</div>";
-        // Method for Pin so it can be called by knockout list data-bind
+        // Method for Pin so it can be called by knockout list data-bind as well
         self.clicked = function(){
           infowindow.setContent(self.info);
           infowindow.open(map,marker);
@@ -63,15 +70,11 @@ function initialize() {
           }
         });
         // When clicked the markers open the infowindow.
-        // only works on list if self.click the function this does not work or
-        // not using =
         google.maps.event.addListener(marker, 'click', (function() {
           // Global InfowWindow used as a best practice on
-          // google maps.
-          // Method of Pin.clicked is called when a Pin is clicked.
+          // google maps. Method of Pin.clicked is called when a Pin is clicked.
           return self.clicked;
         })());
-        // Since Pin.clicked lives inside Pin it can reach to map marker and infoWindow
     };
 
 var pushModelApp = function(results){
@@ -79,14 +82,14 @@ var pushModelApp = function(results){
       LENGTH  = Results.length,
       i;
   for(i=0;i<LENGTH;i++){
-    mapMarkers.push(new Pins(results, i));
+      mapMarkers.push(new Pins(results, i));
   // pushing to mapMarkers first so after the loop has finished resultsArray is
   // updated to avoid unnecessary updates to the view in the for loop.
   }
+  appViewModel.resultsArray(mapMarkers);
 };
-
-    // This is the function creating the initial array by ajax call to Yelp
- var createArray = function(searchTerm, searchCity){
+// This is the function creating the initial array by ajax call to Yelp
+var createArray = function(searchTerm, searchCity){
 
       function nonce_generate() {
         return (Math.floor(Math.random() * 1e12).toString());
@@ -96,7 +99,7 @@ var pushModelApp = function(results){
        var yelpRequestTimeOut = setTimeout(function(){
          alert("Yelp results failed to load. Please try again.");
          console.log("Ajax request failed to load");
-       }, 8000);
+       }, 2000);
 
        var yelp_url = 'https://api.yelp.com/v2/search';
 
@@ -134,10 +137,8 @@ var pushModelApp = function(results){
        // Send AJAX query via jQuery library.
        $.ajax(settings);
  };
-
 var appViewModel = {
   filter        : ko.observable(""),
   resultsArray  : ko.observableArray([])
 };
-
 google.maps.event.addDomListener(window, 'load', initialize);

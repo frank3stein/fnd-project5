@@ -65,7 +65,15 @@ gulp.task('js', function() {
 //     .pipe(concat('all.js'))
 //     .pipe(gulp.dest('./dist/'));
 // });
-
+// Concat js
+gulp.task('concatjs', function() {
+  return gulp.src('./build/js/bootstrap.min.js',
+                  './build/js/jquery.min.js',
+                  './build/js/knockout-latest.js',
+                  './build/js/oauth-signature.min.js')
+    .pipe(concat('lib.js'))
+    .pipe(gulp.dest('build/js'));
+});
 
 // Gulp watches and run tasks if needed.
 gulp.task('watch', function() {
@@ -118,7 +126,7 @@ gulp.task('css', function() {
 
 // default task
 gulp.task('default', function(){
-  gulp.run('html', 'js', 'css');
+  gulp.run('html', 'js', 'css', 'concatjs');
 
   // Watch .scss files
   gulp.watch('css/*.css', ['css']);

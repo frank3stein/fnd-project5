@@ -67,12 +67,12 @@ gulp.task('js', function() {
 // });
 // Concat js
 gulp.task('concatjs', function() {
-  return gulp.src('./build/js/bootstrap.min.js',
-                  './build/js/jquery.min.js',
+  return gulp.src('./build/js/jquery.min.js',
                   './build/js/knockout-latest.js',
-                  './build/js/oauth-signature.min.js')
-    .pipe(concat('lib.js'))
-    .pipe(gulp.dest('build/js'));
+                  './build/js/oauth-signature.min.js',
+                  './build/js/app.js')
+    .pipe(concat('app.js'));
+    // .pipe(gulp.dest('build/js'));
 });
 
 // Gulp watches and run tasks if needed.
@@ -126,7 +126,7 @@ gulp.task('css', function() {
 
 // default task
 gulp.task('default', function(){
-  gulp.run('html', 'js', 'css', 'concatjs');
+  gulp.run('html', 'css', 'js');
 
   // Watch .scss files
   gulp.watch('css/*.css', ['css']);

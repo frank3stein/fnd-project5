@@ -1,19 +1,59 @@
-      html, body, #map-canvas {
-        height: 95%;
-        margin: 0px;
-        padding: 0px
-      }
-      #panel {
-        position: absolute;
-        top: 5px;
-        left: 50%;
-        margin-left: -180px;
-        z-index: 5;
-        background-color: #fff;
-        padding: 5px;
-        border: 1px solid #999;
-      }
+html, body, #map-canvas {
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+}
 
-      .infowindow {
-        max-width: 200px;
-      }
+#places-toggle{
+  padding: 1px 6px;
+  position: absolute;
+  z-index: 1;
+  top:5px;
+  right:100px;
+  background-color: rgba(255,255,255,100);
+}
+.hidden {
+  display: none;
+}
+#places-list{
+  position: absolute;
+  margin: 5px;
+  top: 200px;
+  right: 0px;
+  width: 200px;
+  height: 200px;
+  overflow: auto;
+}
+
+#places-list ul{
+  position: absolute;
+  background-color: #F2F2F2;
+  -webkit-border-top-left-radius: 5px;
+  -webkit-border-bottom-left-radius: 5px;
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-bottomleft: 5px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  padding: 0px;
+  margin:0px;
+}
+
+#places-list li{
+  list-style: none;
+  cursor: pointer;
+  text-align: center;
+  list-style-position: outside;
+}
+
+li:hover{
+  border-radius: 5px;
+  background-color: black;
+  color: white;
+}
+
+#searchBar{
+  position:absolute;
+  z-index: 1;
+  right: 50%;
+  border-radius: 2px;
+}

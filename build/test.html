@@ -1,0 +1,39 @@
+<html><script src=js/knockout-latest.js></script><input placeholder=Search… type=search data-bind="value: query, valueUpdate: 'keyup'" autocomplete=off><ul data-bind="template: {name:'beer', foreach:beers}"></ul><script type=text/html id=beer><li> <strong data-bind="text: name"></strong> – <span data-bind="text: brewery"></span> – <span data-bind="text: style"></span> </li></script><script>
+var beers = [
+  {name:"asd", brewery:"asdas", style:"asdadsa"},
+  {name:"asd", brewery:"asdas", style:"asdadsa"},
+  {name:"asd", brewery:"asdas", style:"asdadsa"},
+  {name:"asd", brewery:"asdas", style:"asdadsa"}
+  // …
+];
+
+
+var viewModel = {
+  beers: ko.observableArray(beers),
+  query: ko.observable(''),
+  search: ko.computed(function() {
+    if (!this.query){
+      console.log(this.beers);
+      return this.beers;
+    } else {
+    return ko.utils.arrayFilter(this.beers, function(marker) {
+        return marker.name.toLowerCase().indexOf(this.query.toLowerCase()) < -1;
+    });
+  }
+}, viewModel)
+  // search: function(value) {
+  //   // remove all the current beers, which removes them from the view
+  //   viewModel.beers.removeAll();
+  //
+  //   for(var x in beers) {
+  //     if(beers[x].name.toLowerCase().indexOf(value.toLowerCase()) >= 0) {
+  //       viewModel.beers.push(beers[x]);
+  //     }
+  //   }
+  // }
+};
+viewModel.query.subscribe(viewModel.search);
+ko.applyBindings(viewModel);
+
+
+</script></html>

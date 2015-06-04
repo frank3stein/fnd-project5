@@ -76,7 +76,7 @@ var City = function(data){
     var self     = this;
     self.name    = wikiData[0];
     self.info    = "<div class='content'>"+
-                    "<h2>"+wikiData[0]+"</h2>"+
+                    //"<h2>"+wikiData[0]+"</h2>"+
                     "<p>"+wikiData[1][0]+"</p>"+
                     "<p>"+wikiData[2][0]+"</p>"+
                     "<a target='_blank' href="+wikiData[3][0]+">Go to wikipedia page</a>"+

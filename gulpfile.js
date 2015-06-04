@@ -10,9 +10,9 @@ var minifyHTML = require('gulp-minify-html');
 // uglify - JS minify
 var uglify = require('gulp-uglify');
 
-// // image minify
-// var imagemin = require('gulp-imagemin');
-// var pngquant = require('imagemin-pngquant');
+// image minify
+var imagemin = require('gulp-imagemin');
+var pngquant = require('imagemin-pngquant');
 //
 // concat
 var concat = require('gulp-concat');
@@ -48,16 +48,16 @@ gulp.task('js', function() {
     .pipe(gulp.dest('build/js'));
 });
 
-// // Image-min
-// gulp.task('imgmin', function () {
-//     return gulp.src('src/images/*')
-//         .pipe(imagemin({
-//             progressive: true,
-//             svgoPlugins: [{removeViewBox: false}],
-//             use: [pngquant()]
-//         }))
-//         .pipe(gulp.dest('build'));
-// });
+// Image-min
+gulp.task('imgmin', function () {
+    return gulp.src('images/*')
+        .pipe(imagemin({
+            progressive: true,
+            svgoPlugins: [{removeViewBox: false}],
+            use: [pngquant()]
+        }))
+        .pipe(gulp.dest('build/images'));
+});
 
 // // Concat
 // gulp.task('scripts', function() {
@@ -126,7 +126,7 @@ gulp.task('css', function() {
 
 // default task
 gulp.task('default', function(){
-  gulp.run('html', 'css', 'js');
+  gulp.run('html', 'css', 'js', 'imgmin');
 
   // Watch .scss files
   gulp.watch('css/*.css', ['css']);
@@ -135,7 +135,7 @@ gulp.task('default', function(){
   gulp.watch('js/*.js', ['js']);
 
   // Watch image files
-  gulp.watch('src/images/**/*', ['images']);
+  gulp.watch('images/*', ['imgmin']);
 
   // Watch .html files
   gulp.watch('*.html', ['html']);

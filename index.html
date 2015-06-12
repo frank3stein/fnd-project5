@@ -1,36 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-<<<<<<< HEAD
-	<title></title>
-	<script src="bower_components/platform/platform.js"></script>
-	<script src="bower_components/webcomponentsjs/webcomponents.min.js"></script>
-  	<link rel="import" href="google-apis.html">
-	<link rel="import" href="bower_components/polymer/polymer.html">
-	<link rel="import" href="bower_components/google-map/google-map.html">
-</head>
-<body>
-<style>
-body, html {
-  font-family: 'Roboto', Arial, sans-serif;
-  height: 100%;
-  margin: 0;
-}
-google-map {
-  display: block;
-  height: 100%;
-}
-</style>
-<google-map latitude="37.77493" longitude="-122.41942"></google-map>
-</body>
-</html>
-=======
 	<title>Syndey's Sushi Restaurants</title>
 	<link rel="stylesheet" href="css/style.css" media="screen" title="no title" charset="utf-8">
 	<meta name="viewport" content="initial-scale=1.0"/>
-	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.19&key=AIzaSyCfa3vEfKxlIxDgQ0dyVH6TmtTRnsFRZXo&region=NL&libraries=places"></script>
+	<link 	href="css/offline-theme-chrome.css">
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.19&key=AIzaSyCfa3vEfKxlIxDgQ0dyVH6TmtTRnsFRZXo&region=NL&libraries=places"></script>
+	<script src="js/offline.min.js"></script>
 </head>
 <body>
+	<div id="status"></div>
 	<input id="searchBar" placeholder="Search..." type="text" data-bind="value: filter, valueUpdate: 'keyup'">
 	<div id="map-canvas">
 	</div>
@@ -42,9 +21,8 @@ google-map {
 	  	</ul>
 	</div>
 </body>
-<script type="text/javascript" src="js/knockout-latest.js" ></script>
-<script type="text/javascript" src="js/jquery.min.js" ></script>
+<script src="js/knockout-latest.js" ></script>
+<script src="js/jquery.min.js" ></script>
 <script src="js/oauth-signature.min.js" async></script>
-<script type="text/javascript" src="js/app.js" async></script>
+<script src="js/app.js" async></script>
 </html>
->>>>>>> gh-pages

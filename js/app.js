@@ -1,13 +1,33 @@
 // Creating Globals
-var mapMarkers=[],
+var mapMarkers = [],
     map,
     infowindow,
     city,
     searchTerm;
 //Intialising the map and creating infowindow which will be shared among Pins
 function initialize() {
-  city="Sydney";
-  searchTerm="Sushi";
+  // Checking if the browser is offline or online and changing the status
+  // html to Offline. Online is
+  var status = document.getElementById("status");
+
+  function updateOnlineStatus(event) {
+    var condition = navigator.onLine ? "online" : "offline";
+    console.log(condition);
+
+    status.className = condition;
+    status.innerHTML = "Browser is "+condition.toUpperCase()+".";
+    if (condition === "online"){
+    $("#status").css({opacity: 1.0, visibility: "visible"}).animate({opacity: 0}, 3000);
+    }
+    else {
+    status.style.visibility = "visible";
+    }
+  }
+  window.addEventListener('online',  updateOnlineStatus);
+  window.addEventListener('offline', updateOnlineStatus);
+
+  city = "Sydney";
+  searchTerm = "Sushi";
   var mapOptions = {
     zoom: 14,
     center: new google.maps.LatLng(-33.875, 151.209)
@@ -15,7 +35,7 @@ function initialize() {
   map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
   infowindow = new google.maps.InfoWindow({
-      maxWidth: 200
+    margin: 20
   });
   // Getting the City info from Wikipedia and putting a marker, not in list or filter
   // cityInfo(city) ---> $.ajax(wiki) ---> new City(wikiData) ----> marker and infowindow(shared global)
@@ -35,13 +55,32 @@ function initialize() {
       }
   }, appViewModel);
   ko.applyBindings(appViewModel);
-// Map centers itself while resizing
-google.maps.event.addDomListener(window, "resize", function() {
- var center = map.getCenter();
- google.maps.event.trigger(map, "resize");
- map.setCenter(center);
-});
+  // Map centers itself while resizing
+  google.maps.event.addDomListener(window, "resize", function() {
+    var center = map.getCenter();
+    google.maps.event.trigger(map, "resize");
+    map.setCenter(center);
+  });
+  // When clicked on map infoWindow closes
+  google.maps.event.addDomListener(map, 'click', function(){
+    infowindow.close();
+  });
+  // Using "L" key to toggle the list menu on/off
+  $(document).keypress(function(event) {
+    var code = (event.keyCode ? event.keyCode : event.which);
+    if(code === 108) {
+      $("#places-list").toggleClass('hidden');
+    }
+  });
+  // Three-finger tap on mobile toggles the list menu on/off
+  addEventListener('touchstart', function(event){
+    var touch = event.touches[0];
+    if ( event.touches.length == 3){
+      $("#places-list").toggleClass('hidden');
+    }
+  }, false);
 } // init close
+
 //Wikipedia Ajax call which uses the City constructor to put the pin with all the info to the map
 function cityInfo (city){
   var wikiTimeout = setTimeout(function(){
@@ -75,8 +114,7 @@ var City = function(data){
     var wikiData = data;
     var self     = this;
     self.name    = wikiData[0];
-    self.info    = "<div class='content'>"+
-                    //"<h2>"+wikiData[0]+"</h2>"+
+    self.info    =  "<div class='content'>"+
                     "<p>"+wikiData[1][0]+"</p>"+
                     "<p>"+wikiData[2][0]+"</p>"+
                     "<a target='_blank' href="+wikiData[3][0]+">Go to wikipedia page</a>"+
@@ -91,32 +129,23 @@ var City = function(data){
             map: map,
             animation: google.maps.Animation.DROP
   });
-  // Sets infoWindow width to 600 if on large screen or to 200
-  function maxWidth(){
-    var widthMap = $('#map-canvas').width();
-        if (widthMap>900){
-          return {maxWidth:600};
-        }
-        else {
-          return {maxWidth:200};
-        }
-  }
-  var infowindow = new google.maps.InfoWindow(maxWidth());
+
+  var infowindow = new google.maps.InfoWindow(); //(maxWidth();
   google.maps.event.addListener(marker, 'click', (function(){
       return function(){
         infowindow.setContent(self.info);
         infowindow.open(map,marker);
-        map.panTo(marker.position);
       };
   })());
 };//City constructor ends
 
-// To fix the yelp HTTP issue, changes the image urls to https
+// To fix the yelp HTTP issue, changes the image urls from http://... to https://...
 function stringHTTPS(string){
 string = string.split(":");
 string = string[0]+"s:"+string[1];
 return string;
 }
+
 // Creating the Pin constructor object
 var Pins = function (data, i) {
         var self  = this;
@@ -130,19 +159,23 @@ var Pins = function (data, i) {
         self.address = yelpData.location.address[0]+", "+yelpData.location.city+", "+yelpData.location.display_address[3];
         // Here data from Yelp, Images from Streetview are stored for each constructed object
         // Street View Image can be clicked to go to the streetview of the adress
-        self.info    = "<div class='content'>"+
+        self.info   = "<div id='content'>"+
+                      "<div id='siteNotice'>"+
+                      "</div>"+
+                      "<div id='bodyContent'>"+
                       "<h2>"+yelpData.name+"</h2>"+
-                      "<img src='"+httpsImg+"'>"+
+                      "<img src='"+httpsImg+"' height='100' width='100'>"+
                       "<a target='_blank' href='http://maps.google.com/maps?q=&layer=c&cbll="+self.lat+","+self.long+"'>"+
                       "<img src='https://maps.googleapis.com/maps/api/streetview?size=100x100&location="+self.lat+","+self.long+"'></a>"+
                       "<p>"+yelpData.snippet_text+"</p>"+
-                      "<p>Rating:"+yelpData.rating+"</p>"+
+                      "<p>Rating: "+yelpData.rating+"</p>"+
+                      "</div>"+
                       "</div>";
         // Method for Pin so it can be called by knockout list data-bind as well
         self.clicked = function(){
           infowindow.setContent(self.info);
+          map.setCenter(marker.position);
           infowindow.open(map,marker);
-          map.panTo(marker.position);
         };
 
         var marker = new google.maps.Marker({
@@ -231,12 +264,14 @@ var createArray = function(searchTerm, searchCity){
        };
        // Send AJAX query via jQuery library.
        $.ajax(settings);
- };
+};
+
 var appViewModel = {
   filter        : ko.observable(""),
   resultsArray  : ko.observableArray([]),
   hideList      : $("#places-toggle").click(function() {
-    $("#places-list").toggleClass('hidden');
-  })
+                    $("#places-list").toggleClass('hidden');
+                  })
+
 };
 google.maps.event.addDomListener(window, 'load', initialize);

@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-Maps Project 
-Children's Paradise
-
-=======
 # fnd-project5
 In this project I used Yelp API, Google Maps API, Google StreetView API and Wikipedia API in order to create a map of Sydney where users can look at the first 20 Sushi Restaurants around the city.
 
@@ -16,4 +11,3 @@ The iframe in Sydney marker does not work the best for now, but I think after go
 
 You can view the project with the link below:
 http://frank3stein.github.io/fnd-project5/build/
->>>>>>> gh-pages

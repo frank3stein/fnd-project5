@@ -1,9 +1,0 @@
-<!DOCTYPE html><html><head><title></title><script type=text/javascript src=https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min.js>
-	function WebmailViewModel() {
-    // Data
-    var self = this;
-    self.folders = ['Inbox', 'Archive', 'Sent', 'Spam'];
-};
-
-ko.applyBindings(new WebmailViewModel());
-	</script></head><body><ul class=folders data-bind="foreach: folders"><li data-bind="text: $data"></li></ul></body></html>

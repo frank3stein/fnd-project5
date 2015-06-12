@@ -175,11 +175,7 @@ var Pins = function (data, i) {
                       "</div>";
         // Method for Pin so it can be called by knockout list data-bind as well
         self.clicked = function(){
-          // var $infoContent = $("#content");
-          // var IWC = infowindow.getContent();
-          // IWC = self.info;
           infowindow.setContent(self.info);
-          // $infoContent.height($infoContent.height());
           map.setCenter(marker.position);
           infowindow.open(map,marker);
         };

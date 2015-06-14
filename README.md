@@ -10,6 +10,14 @@ The markers are numbered to the order of the list items, they are sorted as in t
 
 The iframe in Sydney marker does not work the best for now, but I think after google incorporates views.google to maps, it will be more customisable.
 
+Map Controls 
+
+On desktop
+Press " L " - Toggles the list view
+
+On Mobile
+Three finger tap - Toggles the list view
+
 You can view the project with the link below:
 http://frank3stein.github.io/fnd-project5/build/
 

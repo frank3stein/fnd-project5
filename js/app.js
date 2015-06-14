@@ -4,6 +4,7 @@ var mapMarkers = [],
     infowindow,
     city,
     searchTerm;
+
 //Intialising the map and creating infowindow which will be shared among Pins
 function initialize() {
   // Checking if the browser is offline or online and changing the status
@@ -21,6 +22,7 @@ function initialize() {
     }
     else {
     status.style.visibility = "visible";
+    status.style.opacity = "1.0";
     }
   }
   window.addEventListener('online',  updateOnlineStatus);
@@ -35,6 +37,7 @@ function initialize() {
   map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
   infowindow = new google.maps.InfoWindow({
+    maxWidth: 400,
     margin: 20
   });
   // Getting the City info from Wikipedia and putting a marker, not in list or filter
@@ -124,6 +127,7 @@ var City = function(data){
                     '<div><small><a href="https://www.google.com/maps/views/" style="color:#0000FF; text-align:left">Views</a>: '+
                     '<a href="https://www.google.com/maps/views/view/112608914008214588092/gphoto/6148751372575589474" style="color:#0000FF; text-align:left">Sydney - Pylon Lookout</a> by <a href="https://www.google.com/maps/views/profile/112608914008214588092" style="color:#0000FF; text-align:left">Olivier Wavre</a></small></div>'+
                     "</div>";
+
   var marker = new google.maps.Marker({
             position: new google.maps.LatLng(-33.875, 151.209),
             map: map,
@@ -163,12 +167,12 @@ var Pins = function (data, i) {
                       "<div id='siteNotice'>"+
                       "</div>"+
                       "<div id='bodyContent'>"+
-                      "<h2>"+yelpData.name+"</h2>"+
-                      "<img src='"+httpsImg+"' height='100' width='100'>"+
-                      "<a target='_blank' href='http://maps.google.com/maps?q=&layer=c&cbll="+self.lat+","+self.long+"'>"+
-                      "<img src='https://maps.googleapis.com/maps/api/streetview?size=100x100&location="+self.lat+","+self.long+"'></a>"+
+                      "<h2 class='text-center'>"+yelpData.name+"</h2>"+
                       "<p>"+yelpData.snippet_text+"</p>"+
                       "<p>Rating: "+yelpData.rating+"</p>"+
+                      "<img src='"+httpsImg+"' height='100' width='100'>"+
+                      "<a target='_blank' href='http://maps.google.com/maps?q=&layer=c&cbll="+self.lat+","+self.long+"'>"+
+                      "<img src='https://maps.googleapis.com/maps/api/streetview?size=100x100&location="+self.lat+","+self.long+"' height='100' width='100'></a>"+
                       "</div>"+
                       "</div>";
         // Method for Pin so it can be called by knockout list data-bind as well
@@ -205,10 +209,10 @@ var Pins = function (data, i) {
 
 var pushModelApp = function(results){
   var Results = results.businesses,
-      LENGTH  = Results.length,
+      rLength  = Results.length,
       i;
 
-  for(i=0;i<LENGTH;i++){
+  for(i=0;i<rLength;i++){
       mapMarkers.push(new Pins(results, i));
   // pushing to mapMarkers first so after the loop has finished resultsArray is
   // updated to avoid unnecessary updates to the view in the for loop.
@@ -272,6 +276,5 @@ var appViewModel = {
   hideList      : $("#places-toggle").click(function() {
                     $("#places-list").toggleClass('hidden');
                   })
-
 };
 google.maps.event.addDomListener(window, 'load', initialize);

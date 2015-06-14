@@ -63,14 +63,10 @@ ul > li{
   margin: 5px;
   position: absolute;
   z-index: 1;
-  left: 50px;
+  left: 60px;
   border-radius: 2px;
   width: auto;
 }
-
-/*.gm-style-iw{
-  margin: 0;
-}*/
 
 /*Class for Infowindow content*/
 #content {
@@ -79,25 +75,16 @@ ul > li{
 }
 
 #content img {
-  float: left;
-  margin: 0 10px 10px 0;
-}
-
-#content p {
-
-}
-@media only screen and (min-height: 600px) and (min-width: 1000){
-  #content {
-    height: 500px;
-  }
+  margin: 0 20px 0 0;
 }
 
 @media only screen and (orientation: landscape){
   #content {
-    height: 200px;
+    height: auto;
   }
 }
 
+/*Offline status*/
 #status {
   position : fixed;
   width: 100%;
@@ -114,4 +101,9 @@ ul > li{
 
 .offline {
   background: red;
+}
+
+/*Infowindow Title h2 center class*/
+.text-center {
+  text-align: center;
 }

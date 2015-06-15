@@ -1,4 +1,4 @@
-// Creating Globals
+// @global
 var mapMarkers = [],
     map,
     infowindow,
@@ -7,13 +7,14 @@ var mapMarkers = [],
 
 //Intialising the map and creating infowindow which will be shared among Pins
 function initialize() {
-  // Checking if the browser is offline or online and changing the status
-  // html to Offline. Online is
-  var status = document.getElementById("status");
 
+  var status = document.getElementById("status"); //Status at the moment of initialization
+  /**
+  * Checks the online status of the browser, depending on
+  * offline or online changes CSS to let user know of the condition.
+  */
   function updateOnlineStatus(event) {
     var condition = navigator.onLine ? "online" : "offline";
-    console.log(condition);
 
     status.className = condition;
     status.innerHTML = "Browser is "+condition.toUpperCase()+".";
@@ -59,6 +60,7 @@ function initialize() {
   }, appViewModel);
   ko.applyBindings(appViewModel);
   // Map centers itself while resizing
+  // @listen Browser resize
   google.maps.event.addDomListener(window, "resize", function() {
     var center = map.getCenter();
     google.maps.event.trigger(map, "resize");
@@ -68,14 +70,16 @@ function initialize() {
   google.maps.event.addDomListener(map, 'click', function(){
     infowindow.close();
   });
-  // Using "L" key to toggle the list menu on/off
+  // Toggle the list menu on/off
+  // @listen L - keyboard key
   $(document).keypress(function(event) {
     var code = (event.keyCode ? event.keyCode : event.which);
     if(code === 108) {
       $("#places-list").toggleClass('hidden');
     }
   });
-  // Three-finger tap on mobile toggles the list menu on/off
+  // Toggle the list menu on/off
+  // @listen three finger tap on mobile
   addEventListener('touchstart', function(event){
     var touch = event.touches[0];
     if ( event.touches.length == 3){
@@ -84,7 +88,10 @@ function initialize() {
   }, false);
 } // init close
 
-//Wikipedia Ajax call which uses the City constructor to put the pin with all the info to the map
+/** Calls the wikipedia api for a brief explanation to use at google maps infowindow.
+* Runs the City constructor to build city object on the ajax response.
+* @param {string} city - The search term for Wikipedia ajax call.
+*/
 function cityInfo (city){
   var wikiTimeout = setTimeout(function(){
          alert("Wikipedia results failed to load. Please try again.");
@@ -97,7 +104,7 @@ function cityInfo (city){
           callback:"wikiCallback",
           data:{
             action:"opensearch",
-            search: city,
+            search: city, //@param - Search term
             prop: "revisions"
           },
           success: function(response){
@@ -110,9 +117,14 @@ function cityInfo (city){
   };
   $.ajax(settings);
 }
-// Seperate constructor since City was decided to be added later and as it uses different api
-// variables and those variables are saved differently
-// It has its own Infowindow and does not get filtered.
+
+/**
+* Represents the City
+* @constructor
+* @param {array} data - receives callback response from cityInfo and builds the map dependencies(marker, infowindow content)
+* @create City marker, City infowindow
+* @listen click for marker
+*/
 var City = function(data){
     var wikiData = data;
     var self     = this;
@@ -121,7 +133,6 @@ var City = function(data){
                     "<p>"+wikiData[1][0]+"</p>"+
                     "<p>"+wikiData[2][0]+"</p>"+
                     "<a target='_blank' href="+wikiData[3][0]+">Go to wikipedia page</a>"+
-                    // Google Panaroma View, not yet included in google maps so not flexible
                     '<iframe width="560" height="315" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"'+
                     'src="https://maps.google.com/maps?layer=c&amp;panoid=p-LCAk6lQAkAAAQo8D61dQ&amp;ie=UTF8&amp;source=embed&amp;output=svembed&amp;cbp=13%2C191.81697000000003%2C%2C0%2C0"></iframe>'+
                     '<div><small><a href="https://www.google.com/maps/views/" style="color:#0000FF; text-align:left">Views</a>: '+
@@ -143,18 +154,27 @@ var City = function(data){
   })());
 };//City constructor ends
 
-// To fix the yelp HTTP issue, changes the image urls from http://... to https://...
+/**
+* @function
+* @param   {string} string  - URL with http://
+* @return  {string} string  - URL with https://
+*/
 function stringHTTPS(string){
 string = string.split(":");
 string = string[0]+"s:"+string[1];
 return string;
 }
 
-// Creating the Pin constructor object
+/**
+* Represents each pin on the map.
+* @constructor
+* @param {array} data - Receives Yelp ajax response as an array in pushModelApp
+* @param number       - Counter of each pin to be used for marker icon numbers
+*/
 var Pins = function (data, i) {
         var self  = this;
         // Pins are created inside Yelp ajax success function
-        var yelpData = data.businesses[i];
+        var yelpData = data;
         var httpsImg = stringHTTPS(yelpData.image_url);
         // The object properties are taken from Yelp
         self.name    = yelpData.name;
@@ -177,6 +197,7 @@ var Pins = function (data, i) {
                       "</div>";
         // Method for Pin so it can be called by knockout list data-bind as well
         self.clicked = function(){
+          infowindow.close();
           infowindow.setContent(self.info);
           map.setCenter(marker.position);
           infowindow.open(map,marker);
@@ -186,11 +207,15 @@ var Pins = function (data, i) {
             position: new google.maps.LatLng(self.lat, self.long),
             title: self.name,
             map: map,
-            // URL Might Change
-            icon: "images/iconb"+(i+1)+".png",
+            icon: "images/iconb"+(i+1)+".png", // @param - counter i
             animation: google.maps.Animation.DROP
         });
-        // http://stackoverflow.com/questions/29557938/removing-map-pin-with-search
+
+         /**
+         * appViewModel.filter check
+         * @property of Pin
+         * @param {boolean} currentState - Adds the marker to the map of the corresponding Pin if true
+         */
         self.isVisible = ko.observable();
         self.isVisible.subscribe(function(currentState) {
           if (currentState) {
@@ -205,21 +230,41 @@ var Pins = function (data, i) {
           // google maps. Method of Pin.clicked is called when a Pin is clicked.
           return self.clicked;
         })());
-    };
 
+        // When orientation changes, closes and opens the marker again.
+            window.onorientationchange = function() {
+        var orientation = window.orientation;
+            switch(orientation) {
+                case 0: $('#content').trigger('resize');
+                break;
+                case 90: $('#content').trigger('resize');
+                break;
+                case -90: $('#content').trigger('resize');
+                break; }
+    };
+    };
+/**
+* @function Constructs pins with Pin constructor passing through Ajax response
+* @param {array} results - Gets the data from createArray function - Yelp API.
+* @access private
+*/
 var pushModelApp = function(results){
   var Results = results.businesses,
       rLength  = Results.length,
       i;
 
   for(i=0;i<rLength;i++){
-      mapMarkers.push(new Pins(results, i));
+      mapMarkers.push(new Pins(Results[i],i));
   // pushing to mapMarkers first so after the loop has finished resultsArray is
   // updated to avoid unnecessary updates to the view in the for loop.
   }
   appViewModel.resultsArray(mapMarkers);
 };
-// This is the function creating the initial array by ajax call to Yelp
+/**
+* @function First member of the chain to build Map Pins. Does the ajax call to Yelp API.
+* @param {String} searchTerm - Could be anything from restaurants, bars, theme parks, to specifics like eg. sushi
+* @param {String} searchCity - Targeted city
+*/
 var createArray = function(searchTerm, searchCity){
 
       function nonce_generate() {
@@ -234,7 +279,7 @@ var createArray = function(searchTerm, searchCity){
 
        var yelp_url = 'https://api.yelp.com/v2/search';
 
-      //  These parameters are local and private
+      // @private
        var parameters = {
            term: searchTerm,
            location: searchCity,
@@ -258,7 +303,6 @@ var createArray = function(searchTerm, searchCity){
          dataType: 'jsonp',
          success: function(results) {
            // Do stuff with results
-           console.log(results);
            pushModelApp(results);
            clearTimeout(yelpRequestTimeOut);
          },
@@ -269,10 +313,13 @@ var createArray = function(searchTerm, searchCity){
        // Send AJAX query via jQuery library.
        $.ajax(settings);
 };
-
+/**
+* @controller
+* @listen changes in the search field (filter) and the resultsArray which is populated by Pins.
+*/
 var appViewModel = {
   filter        : ko.observable(""),
-  resultsArray  : ko.observableArray([]),
+  resultsArray  : ko.observableArray(),
   hideList      : $("#places-toggle").click(function() {
                     $("#places-list").toggleClass('hidden');
                   })

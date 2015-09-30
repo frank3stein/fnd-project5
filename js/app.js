@@ -156,13 +156,13 @@ var City = function(data){
 
 /**
 * @function
-* @param   {string} string  - URL with http://
-* @return  {string} string  - URL with https://
+* @param   {string} string  - URL with http://...
+* @return  {string} string  - URL with https://...
 */
 function stringHTTPS(string){
-string = string.split(":");
-string = string[0]+"s:"+string[1];
-return string;
+    string = String(string).split(":");
+    string = string[0]+"s:"+string[1];
+  return string;
 }
 
 /**

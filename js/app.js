@@ -158,13 +158,13 @@ var City = function(data){
 * @function
 * @param   {string} string  - URL with http://...
 * @return  {string} string  - URL with https://...
-*/
+
 function stringHTTPS(string){
     string = String(string).split(":");
     string = string[0]+"s:"+string[1];
   return string;
-}
-
+} //No longer needed
+**/
 /**
 * Represents each pin on the map.
 * @constructor
@@ -175,7 +175,7 @@ var Pins = function (data, i) {
         var self  = this;
         // Pins are created inside Yelp ajax success function
         var yelpData = data;
-        var httpsImg = stringHTTPS(yelpData.image_url);
+        // var httpsImg = yelpData.image_url;
         // The object properties are taken from Yelp
         self.name    = yelpData.name;
         self.lat     = yelpData.location.coordinate.latitude;
@@ -190,7 +190,7 @@ var Pins = function (data, i) {
                       "<h2 class='text-center'>"+yelpData.name+"</h2>"+
                       "<p>"+yelpData.snippet_text+"</p>"+
                       "<p>Rating: "+yelpData.rating+"</p>"+
-                      "<img src='"+httpsImg+"' height='100' width='100'>"+
+                      "<img src='"+yelpData.image_url+"' height='100' width='100'>"+
                       "<a target='_blank' href='http://maps.google.com/maps?q=&layer=c&cbll="+self.lat+","+self.long+"'>"+
                       "<img src='https://maps.googleapis.com/maps/api/streetview?size=100x100&location="+self.lat+","+self.long+"' height='100' width='100'></a>"+
                       "</div>"+

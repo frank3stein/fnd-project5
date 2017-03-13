@@ -63,7 +63,7 @@ ul > li{
   margin: 5px;
   position: absolute;
   z-index: 1;
-  left: 60px;
+  left: 120px;
   border-radius: 2px;
   width: auto;
 }

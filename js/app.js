@@ -189,6 +189,7 @@ var Pins = function (data, i) {
                       "<div id='bodyContent'>"+
                       "<h2 class='text-center'>"+yelpData.name+"</h2>"+
                       "<p>"+yelpData.snippet_text+"</p>"+
+                      "<p>"+self.address+"</p>"+
                       "<p>Rating: "+yelpData.rating+"</p>"+
                       "<img src='"+yelpData.image_url+"' height='100' width='100'>"+
                       "<a target='_blank' href='http://maps.google.com/maps?q=&layer=c&cbll="+self.lat+","+self.long+"'>"+

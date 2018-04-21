@@ -1,4 +1,4 @@
-const path =  require('path');
+const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
@@ -41,7 +41,10 @@ module.exports = {
   },
   devServer: {
     contentBase: path.join(__dirname, './dist'),
-    compress : true
+    compress : true,
+    // public: 'https://9bb32d69.ngrok.io'
+    // headers: {
+    // }
   },
   devtool: 'inline-source-map',
   plugins: [
@@ -50,14 +53,19 @@ module.exports = {
         title: 'Development',
         template: './src/index.html' // Normally creates a generic HTML for js file. But with template we can feed in our own HTML.
       }),
-      // new HtmlWebpackExternalsPlugin({
-      //   externals: [
-      //     {
-      //       module:'jquery', //Example for CDN
-      //       entry: 'https://unpkg.com/jquery@3.2.1/dist/jquery.min.js',
-      //       // global:'jQuery'  //if you want to setup a global
-      //     }
-      //   ]
-      // })
-  ]
+      new HtmlWebpackExternalsPlugin({
+        externals: [
+          {
+            module:'vue', //Example for CDN
+            entry: 'https://cdn.jsdelivr.net/npm/vue/dist/vue.js',
+            // global:'jQuery'  //if you want to setup a global
+          },
+          // {
+          //   module:'googleMaps',
+          //   entry: 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAbnCoLwjzrj7G5TTcnoK8xLgVlYl2Y_p0&callback=initMap',
+          //   global: 'google'
+          // }
+        ]
+      })
+  ] 
 };

@@ -23,6 +23,10 @@
 </head>
 <body>
     <h3>My Google Maps Demo</h3>
-    <div id="map"></div>
+    <div id="app">
+        <input type="text" id="query" v-model="query" v-on:keyup.13="submit">
+        <div id="map">
+        </div>
+    </div>
 </body>
 </html>

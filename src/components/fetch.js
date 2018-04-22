@@ -11,11 +11,10 @@ function yelpApi(query, position, callback){
         response.json()
     )
     .then((data) => {
-        console.log(data.businesses)
         callback(null, data.businesses);
     })
     .catch((err) => {
-        // callback(err);
+        callback(err);
     })
 }
 

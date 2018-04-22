@@ -1,5 +1,4 @@
 function Marker(data, map, infowindow){
-    console.log(this);
     this.name = data.name;
     this.position = {
         lat: data.coordinates.latitude,
@@ -15,7 +14,6 @@ function Marker(data, map, infowindow){
     "</div>"+
     "<div id='bodyContent'>"+
     "<h2 class='text-center'>"+this.name+"</h2>"+
-    "<p>"+data.snippet_text+"</p>"+
     "<p>"+this.address+"</p>"+
     "<p>Rating: "+this.rating+"</p>"+
     "<img src='"+this.imageHref+"' height='100' width='100'>"+
@@ -34,7 +32,7 @@ function Marker(data, map, infowindow){
         animation: google.maps.Animation.DROP
     })
 
-    this.clicked= () => {
+    this.clicked = () => {  //Arrow function so that when called with the event listener this points to where this function is declared. Which is the current Marker.
         infowindow.close();
         infowindow.setContent(this.info);
         infowindow.open(map, this.marker);

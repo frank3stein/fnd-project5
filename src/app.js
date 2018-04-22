@@ -3,33 +3,32 @@ import Marker from './components/Marker';
 import yelpApi from './components/fetch';
 
 const vue = new Vue({
-    el: '#map',
-    data(){
-        return {
+    el: '#app',
+    data: function(){
+        return{
             businesses:[
             ],
-            position:{
+            position:{ //Sydney
                 lat: -33.8688,
                 lng: 151.2093
             },
-            marker: [],
+            markers: [],
             map:{},
-            infowindow: {}
+            infowindow: {},
+            query:'Pizza'
         }
     },
     watch: {
-        businesses:function(array){
-            array.forEach( data => 
-                this.marker.push( new Marker(data, this.map, this.infowindow) )
-            );
+        businesses: function(array){
+            array.forEach((data, index) => {
+                setTimeout(() => { // For a spaced dropping of the markers. Otherwise they drop all at once. 
+                    vue.markers.push( new Marker(data, vue.map, vue.infowindow) )
+                }, index*100);
+            });
         }
     },
     created: function(){
-        yelpApi('Pizza', this.position, function(err, data){
-            data.forEach((element) => {
-                vue.businesses.push(element);
-            });
-        })
+        yelpApi(this.query, this.position, this.dataToBusinesses)
     },
     mounted: function(){
         this.map = new google.maps.Map(document.getElementById('map'), {
@@ -40,5 +39,21 @@ const vue = new Vue({
             maxWidth: 400,
             margin: 20
         });
+    },
+    methods:{
+        submit(){
+            this.businesses = [];
+            this.markers.forEach(function(marker) {
+                marker.marker.setMap(null); // marker is my Marker object which has a marker object `marker.marker`.
+            });
+            this.markers = [];
+            yelpApi(this.query, this.position, this.dataToBusinesses)
+        },
+        dataToBusinesses(err, data){
+            data.forEach((element) => {
+                this.businesses.push(element);
+            });
+        }
     }
 })
+

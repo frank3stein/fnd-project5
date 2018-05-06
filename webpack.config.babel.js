@@ -42,9 +42,6 @@ module.exports = {
   devServer: {
     contentBase: path.join(__dirname, './dist'),
     compress : true,
-    // public: 'https://9bb32d69.ngrok.io'
-    // headers: {
-    // }
   },
   devtool: 'inline-source-map',
   plugins: [
@@ -57,14 +54,8 @@ module.exports = {
         externals: [
           {
             module:'vue', //Example for CDN
-            entry: 'https://cdn.jsdelivr.net/npm/vue/dist/vue.js',
-            // global:'jQuery'  //if you want to setup a global
-          },
-          // {
-          //   module:'googleMaps',
-          //   entry: 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAbnCoLwjzrj7G5TTcnoK8xLgVlYl2Y_p0&callback=initMap',
-          //   global: 'google'
-          // }
+            entry: 'https://cdn.jsdelivr.net/npm/vue/dist/vue.js'
+          }
         ]
       })
   ] 

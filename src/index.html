@@ -1,0 +1,32 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+<style>
+    html {
+        background-color: hsl(225, 73%, 90%);
+    }
+    
+    h1 {
+        color: white;
+    }
+    
+    #map {
+        height: 400px;
+        width: 100%;
+    }
+</style>
+    <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAbnCoLwjzrj7G5TTcnoK8xLgVlYl2Y_p0">
+    </script>
+</head>
+<body>
+    <h3>My Google Maps Demo</h3>
+    <div id="app">
+        <input type="text" id="query" v-model="query" v-on:keyup.13="submit">
+        <div id="map">
+        </div>
+    </div>
+</body>
+</html>

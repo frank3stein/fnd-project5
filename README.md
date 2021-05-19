@@ -13,7 +13,7 @@ Knockout branch is gh-pages.
 
 You can see an image of the working app.
 
-![Working App]("./workingApp.PNG")
+![Working App](./workingApp.PNG)
 
 This year cors anywhere has changed their policy and only grant limited public access so you will need to request temporary access from this url to run the app locally 
 
